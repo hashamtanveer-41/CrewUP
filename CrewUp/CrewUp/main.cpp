@@ -14,6 +14,12 @@ int main() {
 
     window.clear(sf::Color(40, 44, 52)); // 1. Dark Background
 
+	sf::CircleShape circle(50); // Radius 50
+	circle.setFillColor(sf::Color(50, 40, 50));
+	circle.setPosition(150, 100);
+	circle.scale(0.5f, 0.5f); // Scale by 1.5x
+
+
     // --- PANEL 1: LEFT (Team Members Profiles) ---
     sf::RectangleShape leftPanel(sf::Vector2f(280, 780)); // Width 280, Height 780
     leftPanel.setPosition(10, 10);                        // 10px padding
@@ -63,6 +69,7 @@ int main() {
 		window.draw(centerPanel);          // Draw center panel
 		window.draw(rightPanel);           // Draw right panel
         window.draw(message);               // Draw the text on top
+        window.draw(circle);
 
 
         window.display();                    // 3. Show the frame
