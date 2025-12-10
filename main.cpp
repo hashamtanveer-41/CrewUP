@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -11,6 +13,7 @@ struct Members{
     int exp;
 };
 int main(){
+    ofstream outputFile("Output.txt");
     bool run = true;
     int choice, num = 0;
     Members members;
