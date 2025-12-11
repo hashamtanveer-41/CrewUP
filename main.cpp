@@ -26,6 +26,7 @@ int main(){
                 cin>>num;
                 nameOfMembers(members.name ,num);
         }
+        break;
     }
     return 0;
 }
