@@ -155,15 +155,35 @@ public:
             tail -> next=  newNode;
         }
     }
+
+    void saveFile() {
+        ofstream outputFile("Output.txt");
+        Node* temp = head;
+        while (temp != NULL) {
+            outputFile<< temp-> name<<" "<<temp-> percent<<" "<< temp-> exp<<endl;
+            temp = temp-> next;
+        }
+        outputFile.close();
+    }
+
+    void loadFile() {
+        ifstream outputFile("Output.txt");
+        if (!outputFile) return;
+        string name; int exp; float percentage;
+        while (outputFile >> name>> percentage>> exp) {
+            push_back(name, percentage, exp);
+        }
+        outputFile.close();
+    }
 };
 int main(){
-    ofstream outputFile("Output.txt");
     int exp; float percent;
     string name;
     List ll;
     bool run = true;
     int choice, num = 0;
     Members members;
+    ll.loadFile();
 
     do {
         cout<<"Please the required action: "<<endl;
@@ -178,7 +198,7 @@ int main(){
                 cout<<"Enter the exp of member: "<<endl;
                 cin>>exp;
                 ll.push_front(name,percent, exp);
-
+                ll.saveFile();
                 break;
             case 2:
                 cout<<"Enter the name of member: \n";
