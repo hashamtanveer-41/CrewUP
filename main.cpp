@@ -140,6 +140,7 @@ int main(){
             case 2:
                 run = false;
         }
+        break;
     }
     return 0;
 }
