@@ -77,34 +77,71 @@ public:
         }
         cout<< endl;
     }
-    void pop_back() {
-        if (head == NULL) {
-            cout<<"NO name.";
+    void delete_at_index(int index) {
+        // 1. Check if list is empty or index is invalid
+        if (head == NULL || index < 0) {
+            cout << "List is empty or invalid index." << endl;
             return;
         }
-        Node* temp = head;
-        while (temp -> next != tail) {
-            temp = temp -> next;
+
+        // 2. Handling removal of the HEAD (Index 0)
+        if (index == 0) {
+            Node* temp = head;
+            head = head->next;
+
+            // If list becomes empty, update tail too
+            if (head == NULL) {
+                tail = NULL;
+            }
+
+            delete temp;
+            return;
         }
-        temp -> next = NULL;
-        delete tail;
-        tail = temp;
+
+        // 3. Traverse to the node BEFORE the one we want to delete
+        Node* prev = head;
+        for (int i = 0; i < index - 1; i++) {
+            // If we run out of nodes before reaching index, it's out of bounds
+            if (prev->next == NULL) {
+                cout << "Index out of bounds." << endl;
+                return;
+            }
+            prev = prev->next;
+        }
+
+        // Check if the node to delete actually exists
+        if (prev->next == NULL) {
+            cout << "Index out of bounds." << endl;
+            return;
+        }
+
+        // 4. Delete the node
+        Node* toDelete = prev->next;
+        prev->next = toDelete->next;
+
+        // 5. Handling removal of the TAIL
+        // If we deleted the last node, update the tail pointer
+        if (toDelete == tail) {
+            tail = prev;
+        }
+
+        delete toDelete;
     }
-    void search(string key) {
+    int search(string key) {
         Node* temp = head;
         int idx = 0;
 
         while (temp!=NULL) {
             if (temp -> name == key) {
-            cout<<"matched at "<<idx;
-                return;
+                cout<<"matched at "<<idx;
+                return idx;
             }
             temp = temp-> next;
             idx++;
         }
         cout<<"Not found.";
+        return -1;
     }
-
     void push_back(string val) {
         Node* newNode = new Node(val);
 
@@ -114,33 +151,54 @@ public:
             tail -> next=  newNode;
         }
     }
+    void del(string key) {
+        Node* temp = head;
+        int idx = 0;
+
+        while (temp!=NULL) {
+            if (temp -> name == key) {
+                cout<<"matched at "<<idx<<endl;
+            }
+            temp = temp-> next;
+            idx++;
+        }
+        cout<<"Not found.";
+    }
+
 };
 int main(){
     ofstream outputFile("Output.txt");
+    string name;
     List ll;
-    ll.push_front("3");
-    ll.push_front("2");
-    ll.push_front("1");
-    ll.insert("4", 0);
-    ll.printLL();
-
-    ll.search("4");cout<<endl;
     bool run = true;
     int choice, num = 0;
     Members members;
-    cout<<"Please the required action: "<<endl;
-    cin>>choice;
-    while (run) {
+
+    do {
+        cout<<"Please the required action: "<<endl;
+        cout<<"1. Add members 2. Remove members 3. View members 4. exit"<<endl;
+        cin>>choice;
         switch (choice) {
             case 1:
-                cout<<"Enter the number of members: ";
-                cin>>num;
-                nameOfMembers(members.name ,num);
+                cout<<"Enter the name of member: "<<endl;
+                cin>>name;
+                ll.push_front(name);
+
                 break;
             case 2:
+                cout<<"Enter the name of member: \n";
+                cin>>name;
+                ll.delete_at_index(ll.search(name));
+                break;
+            case 3:
+                ll.printLL();
+                break;
+            case 4:
                 run = false;
         }
     }
+    while (run);
+
     return 0;
 }
 void nameOfMembers(string arr[], int len) {
