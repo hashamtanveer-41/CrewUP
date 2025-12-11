@@ -16,10 +16,14 @@ struct Members{
 class Node {
 public:
     string name;
+    float percent;
+    int exp;
     Node* next;
 
-    Node(string val) {
+    Node(string val, float p, int e) {
         name = val;
+        percent = p;
+        exp = e;
         next = NULL;
     }
 };
@@ -30,8 +34,8 @@ public:
     List() {
         head = tail = NULL;
     }
-    void push_front(string val) {
-        Node* newNode= new Node(val);
+    void push_front(string val, float p, int e) {
+        Node* newNode= new Node(val, p, e);
         if (head == NULL) {
             head = tail= newNode;
             return;
@@ -51,13 +55,13 @@ public:
 
         delete temp;
     }
-    void insert(string val, int pos) {
+    void insert(string val, int pos, float p, int e) {
         if (pos<0) {
             cout<<"Invalid Position"<<endl;
         }
 
         if (pos == 0) {
-            push_front(val);
+            push_front(val, p, e);
             return;
         }
         Node* temp = head;
@@ -65,14 +69,14 @@ public:
             temp = temp -> next;
         }
 
-        Node* newNode = new Node(val);
+        Node* newNode = new Node(val, p, e);
         newNode -> next = temp -> next;
         temp -> next = newNode;
     }
     void printLL() {
          Node* temp = head;
         while (temp!= NULL) {
-            cout<<temp -> name <<endl;
+            cout<<"Name: "<<temp -> name<<" percentage : "<<temp->percent<<"% Exp is: "<<temp->exp <<endl;
             temp = temp -> next;
         }
         cout<< endl;
@@ -142,8 +146,8 @@ public:
         cout<<"Not found.";
         return -1;
     }
-    void push_back(string val) {
-        Node* newNode = new Node(val);
+    void push_back(string val, float p, int e) {
+        Node* newNode = new Node(val, p, e);
 
         if (head == NULL) {
             head = tail = newNode;
@@ -151,23 +155,10 @@ public:
             tail -> next=  newNode;
         }
     }
-    void del(string key) {
-        Node* temp = head;
-        int idx = 0;
-
-        while (temp!=NULL) {
-            if (temp -> name == key) {
-                cout<<"matched at "<<idx<<endl;
-            }
-            temp = temp-> next;
-            idx++;
-        }
-        cout<<"Not found.";
-    }
-
 };
 int main(){
     ofstream outputFile("Output.txt");
+    int exp; float percent;
     string name;
     List ll;
     bool run = true;
@@ -182,7 +173,11 @@ int main(){
             case 1:
                 cout<<"Enter the name of member: "<<endl;
                 cin>>name;
-                ll.push_front(name);
+                cout<<"Enter the percentage of member: "<<endl;
+                cin>>percent;
+                cout<<"Enter the exp of member: "<<endl;
+                cin>>exp;
+                ll.push_front(name,percent, exp);
 
                 break;
             case 2:
