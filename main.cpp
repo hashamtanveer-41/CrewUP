@@ -120,9 +120,7 @@ int main(){
         cin>>choice;
         switch (choice) {
             case 1:
-                cout<<"Please the required action: "<<endl;
-                cout<<"1. Add members 2. Remove members 3. View members 4. exit"<<endl;
-                cin>>choice;do {
+               do {
                     cout<<"Please enter the required action: "<<endl;
                     cout<<"1. Add members 2. Remove members 3. View members 4. To exit Members mode."<<endl;
                     cin>>choice;
