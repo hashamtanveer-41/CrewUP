@@ -111,35 +111,47 @@ void loadFile() {
 int main(){
     int exp; float percent;
     string name;
-    bool run = true;
+    bool run = true, runOut = true;
     int choice, num = 0;
-    do {
-        cout<<"Please the required action: "<<endl;
-        cout<<"1. Add members 2. Remove members 3. View members 4. exit"<<endl;
+    loadFile();
+
+    do {  cout<<"Please the required action you want to perform related to: "<<endl;
+        cout<<"1. Members 2. Tasks 3. Shame Board 5. Weekly leader 4. exit"<<endl;
         cin>>choice;
         switch (choice) {
             case 1:
-                cout<<"Enter the name of member: "<<endl;
-                cin>>name;
-                cout<<"Enter the percentage of member: "<<endl;
-                cin>>percent;
-                cout<<"Enter the exp of member: "<<endl;
-                cin>>exp;
-                push_front(name,percent, exp);
-                saveFile();
-                break;
-            case 2:
-                cout<<"Enter the name of member: \n";
-                cin>>name;
-                delete_at_index(search(name));
-                break;
-            case 3:
-                printLL();
-                break;
-            case 4:
-                run = false;
+                cout<<"Please the required action: "<<endl;
+                cout<<"1. Add members 2. Remove members 3. View members 4. exit"<<endl;
+                cin>>choice;do {
+                    cout<<"Please enter the required action: "<<endl;
+                    cout<<"1. Add members 2. Remove members 3. View members 4. To exit Members mode."<<endl;
+                    cin>>choice;
+                    switch (choice) {
+                        case 1:
+                            cout<<"Enter the name of member: "<<endl;
+                            cin>>name;
+                            cout<<"Enter the percentage of member: "<<endl;
+                            cin>>percent;
+                            cout<<"Enter the exp of member: "<<endl;
+                            cin>>exp;
+                            push_front(name,percent, exp);
+                            saveFile();
+                            break;
+                        case 2:
+                            cout<<"Enter the name of member: \n";
+                            cin>>name;
+                            delete_at_index(search(name));
+                            break;
+                        case 3:
+                            printLL();
+                            break;
+                        case 4:
+                            run = false;
+                    }
+                }
+                while (run);
         }
-    }
-    while (run);
+    }while (runOut);
+
     return 0;
 }
