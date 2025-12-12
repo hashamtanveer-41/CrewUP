@@ -4,7 +4,7 @@
 
 using namespace std;
 struct Node {
-    std::string name;
+    string name;
     float percent;
     int exp;
     Node* next;
@@ -116,7 +116,7 @@ int main(){
     loadFile();
 
     do {  cout<<"Please the required action you want to perform related to: "<<endl;
-        cout<<"1. Members 2. Tasks 3. Shame Board 5. Weekly leader 4. exit"<<endl;
+        cout<<"1. Members 2. Tasks 3. Shame Board 5. Weekly leader 6. exit"<<endl;
         cin>>choice;
         switch (choice) {
             case 1:
