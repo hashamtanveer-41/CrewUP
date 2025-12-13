@@ -19,10 +19,9 @@ void loadFile();
 void shameBoard();
 
 int main(){
-    int exp; float percent;
+    int exp,  choice, num = 0; float percent;
     string name;
     bool run = true, runOut = true;
-    int choice, num = 0;
     loadFile();
 
     do {
@@ -41,15 +40,19 @@ int main(){
                             cin>>name;
                             cout<<"Enter the percentage of member: "<<endl;
                             cin>>percent;
+                            while (percent<0|| percent>100 ) {
+                                cout<<"Enter valid percentage between 1 and 100: "<<endl;
+                                cin>>percent;
+                            }
                             cout<<"Enter the exp of member: "<<endl;
                             cin>>exp;
                             push_front(name,percent, exp);
-                            saveFile();
                             break;
                         case 2:
                             cout<<"Enter the name of member: \n";
                             cin>>name;
                             delete_at_index(search(name));
+                            saveFile();
                             break;
                         case 3:
                             printLL();
