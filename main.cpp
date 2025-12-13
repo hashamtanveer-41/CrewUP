@@ -63,8 +63,8 @@ void delete_at_index(int index) {
     if (toDelete == tail) {
         tail = prev;
     }
-
     delete toDelete;
+    cout<<"The member was removed successfully"<<endl;
 }
 int search(string key) {
     Node* temp = head;
@@ -108,6 +108,19 @@ void loadFile() {
     }
     outputFile.close();
 }
+void shameBoard() {
+    Node* temp = head;
+    bool check = true;
+    while (temp!= NULL) {
+       if (temp-> percent< 30) {
+           cout<<"Name: "<<temp -> name<<" percentage : "<<temp->percent<<"% Exp is: "<<temp->exp <<endl;
+           check = false;
+       }
+        temp = temp -> next;
+    }
+    if (check) cout<<"No member in shame board."<<endl;
+    cout<< endl;
+}
 int main(){
     int exp; float percent;
     string name;
@@ -115,8 +128,9 @@ int main(){
     int choice, num = 0;
     loadFile();
 
-    do {  cout<<"Please the required action you want to perform related to: "<<endl;
-        cout<<"1. Members 2. Tasks 3. Shame Board 5. Weekly leader 6. exit"<<endl;
+    do {
+        cout<<"Please the required action you want to perform related to: "<<endl;
+        cout<<"1. Members 2. Tasks 3. Shame Board 4. Weekly leader 5. exit"<<endl;
         cin>>choice;
         switch (choice) {
             case 1:
@@ -145,10 +159,20 @@ int main(){
                             break;
                         case 4:
                             run = false;
+                            break;
                     }
-                }
-                while (run);
+                }while (run);
+            case 2:
+                break;
+            case 3:
+                shameBoard();
+                break;
+            case 4:
+                break;
+            case 5:
+                runOut = false;
         }
+
     }while (runOut);
 
     return 0;
