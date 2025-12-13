@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <ctime>
+#include <cstdlib>
 
 using namespace std;
 
@@ -17,12 +19,14 @@ void push_back(string, float, int);
 void saveFile();
 void loadFile();
 void shameBoard();
+void weeklyLeader();
 
 int main(){
     int exp,  choice, num = 0; float percent;
     string name;
     bool run = true, runOut = true;
     loadFile();
+    srand(time(0));
 
     do {
         cout<<"Please the required action you want to perform related to: "<<endl;
@@ -52,7 +56,6 @@ int main(){
                             cout<<"Enter the name of member: \n";
                             cin>>name;
                             delete_at_index(search(name));
-                            saveFile();
                             break;
                         case 3:
                             printLL();
@@ -68,13 +71,14 @@ int main(){
                 shameBoard();
                 break;
             case 4:
+                weeklyLeader();
                 break;
             case 5:
                 runOut = false;
         }
 
     }while (runOut);
-
+    saveFile();
     return 0;
 }
 struct Node {
@@ -177,10 +181,13 @@ void delete_at_index(int index) {
 }
 void printLL() {
     Node* temp = head;
+    int count = 0;
     while (temp!= NULL) {
-        cout<<"Name: "<<temp -> name<<" percentage : "<<temp->percent<<"% Exp is: "<<temp->exp <<endl;
+        cout<<count+1<<". Name: "<<temp -> name<<" percentage : "<<temp->percent<<"% Exp is: "<<temp->exp <<endl;
         temp = temp -> next;
+        count++;
     }
+    cout<<"The total number of members are: "<<count<<endl;
     cout<< endl;
 }
 void push_front(string val, float p, int e) {
@@ -191,4 +198,26 @@ void push_front(string val, float p, int e) {
     }
     newNode -> next = head;
     head = newNode;
+}
+void weeklyLeader() {
+    Node* temp = head;
+    if (temp == NULL) {
+        cout<<"No member was found."<<endl;
+        return;
+    }
+    int count = 0;
+    while (temp!= NULL) {
+        temp = temp -> next;
+        count++;
+    }
+    int random = rand()%count;
+    count = 0;
+    temp = head;
+    while (temp!= NULL) {
+        if (count == random)cout << "Weekly leader is " << temp->name << " percentage : " << temp->percent <<
+                            "% Exp is: " << temp->exp << endl;
+        temp = temp -> next;
+        count++;
+    }
+
 }
