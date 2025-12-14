@@ -3,6 +3,7 @@
 #include <fstream>
 #include <ctime>
 #include <cstdlib>
+#include <iomanip>
 
 using namespace std;
 
@@ -224,7 +225,7 @@ void weeklyLeader() {
     } else {
         // Calculate difference in seconds
         double secondsPassed = difftime(currentTime, previousState.electionTime);
-        cout << "Time passed since last election: " << secondsPassed << " seconds." << endl;
+        cout << "Time passed since last election: "<<setprecision(3)<< secondsPassed/(3600*24) << " days "<< secondsPassed/3600 << " hours "  << secondsPassed/60 << " minutes" << endl;
 
         if (secondsPassed >= SEVEN_DAYS_SECONDS) {
             cout << "7 days have passed! Time for a new leader." << endl;
