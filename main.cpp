@@ -7,6 +7,7 @@
 using namespace std;
 
 struct Node;
+struct LeaderState;
 Node* head = NULL;
 Node* tail = NULL;
 
@@ -20,7 +21,8 @@ void saveFile();
 void loadFile();
 void shameBoard();
 void weeklyLeader();
-
+void saveElectionData(const string&, time_t);
+LeaderState loadElectionData();
 int main(){
     int exp,  choice, num = 0; float percent;
     string name;
@@ -89,6 +91,11 @@ struct Node {
     Node(string val, float p, int e)
         : name(val), percent(p), exp(e), next(NULL) {}
 
+};
+struct LeaderState {
+    string leaderName = "None";
+    time_t electionTime  = 0;
+    bool hasData = false;
 };
 void shameBoard() {
     Node* temp = head;
@@ -205,19 +212,71 @@ void weeklyLeader() {
         cout<<"No member was found."<<endl;
         return;
     }
-    int count = 0;
-    while (temp!= NULL) {
-        temp = temp -> next;
-        count++;
-    }
-    int random = rand()%count;
-    count = 0;
-    temp = head;
-    while (temp!= NULL) {
-        if (count == random)cout << "Weekly leader is " << temp->name << " percentage : " << temp->percent <<
-                            "% Exp is: " << temp->exp << endl;
-        temp = temp -> next;
-        count++;
+    const double SEVEN_DAYS_SECONDS = 604800.0;
+    LeaderState previousState = loadElectionData();
+    time_t currentTime = time(0);
+    string currentLeader;
+    bool newElectionNeeded = false;
+
+    if (!previousState.hasData) {
+        cout << "No previous record found." << endl;
+        newElectionNeeded = true;
+    } else {
+        // Calculate difference in seconds
+        double secondsPassed = difftime(currentTime, previousState.electionTime);
+        cout << "Time passed since last election: " << secondsPassed << " seconds." << endl;
+
+        if (secondsPassed >= SEVEN_DAYS_SECONDS) {
+            cout << "7 days have passed! Time for a new leader." << endl;
+            newElectionNeeded = true;
+        } else {
+            cout << "7 days have NOT passed. Keeping current leader." << endl;
+            currentLeader = previousState.leaderName;
+        }
     }
 
+    // 4. Perform Election if needed
+    if (newElectionNeeded) {
+        int count = 0;
+        while (temp!= NULL) {
+            temp = temp -> next;
+            count++;
+        }
+        int random= rand()%count;
+        count = 0;
+        temp = head;
+        while (temp!= NULL) {
+            if (count == random) {
+                cout << "Weekly leader is " << temp->name << " percentage : " << temp->percent <<
+                                "% Exp is: " << temp->exp << endl;
+                currentLeader = temp -> name;
+            }
+            temp = temp -> next;
+            count++;
+        }
+        saveElectionData(currentLeader,currentTime);
+    } else {
+        cout << "CURRENT LEADER (UNCHANGED): " << currentLeader << endl;
+    }
+}
+void saveElectionData(const string& leaderName, time_t time) {
+    ofstream outFile("WeeklyLeader.txt");
+    if (outFile.is_open()) {
+        outFile << time << endl;
+        outFile << leaderName << endl;
+        outFile.close();
+        cout << "Election data saved successfully." << endl;
+    } else {
+        cerr << "Unable to save election data!" << endl;
+    }
+}
+LeaderState loadElectionData() {
+    LeaderState state;
+    state.hasData = false;
+    ifstream inFile("WeeklyLeader.txt");
+    if (inFile >> state.electionTime >> state.leaderName) {
+        state.hasData = true;
+    }
+    inFile.close();
+    return state;
 }
