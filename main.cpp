@@ -1,19 +1,13 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <ctime>
+#include <cstdlib>
 
 using namespace std;
 
-// this is hasham's part
-struct Node {
-    string name;
-    float percent;
-    int exp;
-    Node* next;
-    Node(string val, float p, int e)
-        : name(val), percent(p), exp(e), next(NULL) {}
-};
-
+struct Node;
+struct LeaderState;
 Node* head = NULL;
 Node* tail = NULL;
 
@@ -50,12 +44,15 @@ void move_node(node*& source_head, node*& dest_head, string task_name);
 void display_task_menu(); // display the menu ( mtlb ke user ko instruction de ga ke 1 press krne se kya ho ya phir 2 se kya ho ga
 
 // Main program (Uses Parent's main structure)
+void weeklyLeader();
+void saveElectionData(const string&, time_t);
+LeaderState loadElectionData();
 int main(){
-    int exp; float percent;
+    int exp,  choice, num = 0; float percent;
     string name;
     bool run = true, runOut = true;
-    int choice, num = 0;
-    loadFile(); // Loads member data
+    loadFile();
+    srand(time(0));
 
     do {
         cout<<"Please the required action you want to perform related to: "<<endl;
@@ -73,10 +70,13 @@ int main(){
                             cin>>name;
                             cout<<"Enter the percentage of member: "<<endl;
                             cin>>percent;
+                            while (percent<0|| percent>100 ) {
+                                cout<<"Enter valid percentage between 1 and 100: "<<endl;
+                                cin>>percent;
+                            }
                             cout<<"Enter the exp of member: "<<endl;
                             cin>>exp;
                             push_front(name,percent, exp);
-                            saveFile();
                             break;
                         case 2:
                             cout<<"Enter the name of member: \n";
@@ -155,6 +155,7 @@ int main(){
                 shameBoard();
                 break;
             case 4:
+                weeklyLeader();
                 break;
             case 5:
                 runOut = false;
@@ -275,10 +276,13 @@ void delete_at_index(int index) {
 }
 void printLL() {
     Node* temp = head;
+    int count = 0;
     while (temp!= NULL) {
-        cout<<"Name: "<<temp -> name<<" percentage : "<<temp->percent<<"% Exp is: "<<temp->exp <<endl;
+        cout<<count+1<<". Name: "<<temp -> name<<" percentage : "<<temp->percent<<"% Exp is: "<<temp->exp <<endl;
         temp = temp -> next;
+        count++;
     }
+    cout<<"The total number of members are: "<<count<<endl;
     cout<< endl;
 }
 void push_front(string val, float p, int e) {
