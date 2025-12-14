@@ -11,7 +11,17 @@ struct LeaderState;
 Node* head = NULL;
 Node* tail = NULL;
 
-// Function prototypes
+// this is Asfand's part
+struct node {
+    string tasks;
+    node* next;
+};
+
+node* todo_head = NULL;
+node* in_progress_head = NULL;
+node* done_head = NULL;
+
+// functions of hasham
 void push_front(string , float, int);
 void printLL();
 void delete_at_index(int);
@@ -20,6 +30,20 @@ void push_back(string, float, int);
 void saveFile();
 void loadFile();
 void shameBoard();
+// functions of asfand
+void add_task_to_list(node*& head, string task_description); // this will add the task
+void display_task_list(node* head); // display the task
+void delete_task_from_list(node*& head, string task_to_delete); // this will delete the task
+void move_task_to_progress(node*& todo_head, node*& in_progress_head, string task_name); // this will move task in the progress section by breaking and linking the node
+void move_task_to_done(node*& in_progress_head, node*& done_head, string task_name); // this will move the task in done in the same way
+
+// Helper function for moving tasks.
+void move_node(node*& source_head, node*& dest_head, string task_name);
+
+// Menu
+void display_task_menu(); // display the menu ( mtlb ke user ko instruction de ga ke 1 press krne se kya ho ya phir 2 se kya ho ga
+
+// Main program (Uses Parent's main structure)
 void weeklyLeader();
 void saveElectionData(const string&, time_t);
 LeaderState loadElectionData();
@@ -67,7 +91,65 @@ int main(){
                             break;
                     }
                 }while (run);
-            case 2:
+                run = true; // Reset run for next loop iteration
+                break;
+            case 2: // INTEGRATED TASK TRACKER
+                do {
+                    display_task_menu();
+                    cin >> choice; // takes input for switch choice
+                    // Input cleanup for 'getline'
+                    cin.ignore(100, '\n');  // yr ye delimiter use kiya hai mtlb ye ke ye values ko mix ni hone deta jese user int enter krta hai phir string tou ye har input ko seperate rakhta hai /n ki help se
+
+                    switch (choice) {
+                        case 1: {
+                            string task_desc; // hasham this stores the contents on the task
+                            cout << "Task to add:"<<endl;
+                            getline(cin, task_desc); // getline is used so that it can also include spaces in the string
+                            add_task_to_list(todo_head, task_desc);
+                            break;
+                        }
+                        case 2:
+                            // Display all three lists
+                            cout << "\n--- TO-DO List ---" << endl;
+                            display_task_list(todo_head); // this function displays each task when callled (simple si bt hai)
+                            cout << "\n--- IN PROGRESS List ---" << endl;
+                            display_task_list(in_progress_head); // this will display functions that are in progress
+                            cout << "\n--- DONE List ---" << endl;
+                            display_task_list(done_head); // this will display function sthat have been done
+                            break;
+                        case 3: {
+                            string task_to_delete;
+                            display_task_list(todo_head); // ye function dobara call kiya ta ke tasks phir se display ho sken
+                            cout << "write the name of task you want to delete:"<<endl;
+                            getline(cin, task_to_delete);
+                            delete_task_from_list(todo_head, task_to_delete); // Deletes from To-Do list
+                            break;
+                        }
+                        case 4: { // Move Task to IN PROGRESS
+                            string task_name;
+                            display_task_list(todo_head);
+                            cout << "Enter task name to move to IN PROGRESS:" << endl;
+                            getline(cin, task_name);
+                            move_task_to_progress(todo_head, in_progress_head, task_name);
+                            break;
+                        }
+                        case 5: { // Move Task to DONE
+                            string task_name;
+                            display_task_list(in_progress_head);
+                            cout << "Enter task name to move to DONE:" << endl;
+                            getline(cin, task_name);
+                            move_task_to_done(in_progress_head, done_head, task_name);
+                            break;
+                        }
+                        case 6:
+                            runOut = false; // Exits the Task mode (inner loop)
+                            break;
+                        default:
+                            cout << "Invalid choice." << endl;
+                    }
+
+                } while (runOut);
+                runOut = true; // Reset runOut for main loop
                 break;
             case 3:
                 shameBoard();
@@ -80,23 +162,29 @@ int main(){
         }
 
     }while (runOut);
-    saveFile();
+
+    // Final Memory Cleanup for Task Lists
+    node* current_task = todo_head;
+    while (current_task != NULL ) {
+        node* next = current_task->next;
+        delete current_task;
+        current_task = next;
+    }
+    current_task = in_progress_head;
+    while (current_task != NULL ) {
+        node* next = current_task->next;
+        delete current_task;
+        current_task = next;
+    }
+    current_task = done_head;
+    while (current_task != NULL ) {
+        node* next = current_task->next;
+        delete current_task;
+        current_task = next;
+    }
     return 0;
 }
-struct Node {
-    string name;
-    float percent;
-    int exp;
-    Node* next;
-    Node(string val, float p, int e)
-        : name(val), percent(p), exp(e), next(NULL) {}
-
-};
-struct LeaderState {
-    string leaderName = "None";
-    time_t electionTime  = 0;
-    bool hasData = false;
-};
+// shame baord made by hasham
 void shameBoard() {
     Node* temp = head;
     bool check = true;
@@ -206,77 +294,98 @@ void push_front(string val, float p, int e) {
     newNode -> next = head;
     head = newNode;
 }
-void weeklyLeader() {
-    Node* temp = head;
-    if (temp == NULL) {
-        cout<<"No member was found."<<endl;
+// menu to add/remove and delete tasks
+void display_task_menu() {
+    cout << "// Menu to add/remove/delete the tasks //" << endl;
+    cout << " 1. Add Task (To-Do) " << endl;
+    cout << " 2. Display All Lists " << endl;
+    cout << " 3. Delete Task (from To-Do) " << endl;
+    cout << " 4. Move Task to IN PROGRESS " << endl;
+    cout << " 5. Move Task to DONE " << endl;
+    cout << " 6. Exit Task Menu " << endl;
+    cout << "Enter a choice "<<endl;
+}
+
+void add_task_to_list(node*& head, string task_description) {
+    node* newNode = new node;
+    newNode->tasks = task_description;
+    newNode->next = head;
+    head = newNode;
+    cout << "Added: " << task_description << endl;
+}
+
+void display_task_list(node* head) {
+    if (head == NULL) {
+        cout << "List is empty." << endl;
         return;
     }
-    const double SEVEN_DAYS_SECONDS = 604800.0;
-    LeaderState previousState = loadElectionData();
-    time_t currentTime = time(0);
-    string currentLeader;
-    bool newElectionNeeded = false;
 
-    if (!previousState.hasData) {
-        cout << "No previous record found." << endl;
-        newElectionNeeded = true;
-    } else {
-        // Calculate difference in seconds
-        double secondsPassed = difftime(currentTime, previousState.electionTime);
-        cout << "Time passed since last election: " << secondsPassed << " seconds." << endl;
-
-        if (secondsPassed >= SEVEN_DAYS_SECONDS) {
-            cout << "7 days have passed! Time for a new leader." << endl;
-            newElectionNeeded = true;
-        } else {
-            cout << "7 days have NOT passed. Keeping current leader." << endl;
-            currentLeader = previousState.leaderName;
-        }
-    }
-
-    // 4. Perform Election if needed
-    if (newElectionNeeded) {
-        int count = 0;
-        while (temp!= NULL) {
-            temp = temp -> next;
-            count++;
-        }
-        int random= rand()%count;
-        count = 0;
-        temp = head;
-        while (temp!= NULL) {
-            if (count == random) {
-                cout << "Weekly leader is " << temp->name << " percentage : " << temp->percent <<
-                                "% Exp is: " << temp->exp << endl;
-                currentLeader = temp -> name;
-            }
-            temp = temp -> next;
-            count++;
-        }
-        saveElectionData(currentLeader,currentTime);
-    } else {
-        cout << "CURRENT LEADER (UNCHANGED): " << currentLeader << endl;
+    int index = 1;
+    while (head != NULL) {
+        cout << index << ". " << head->tasks << endl;
+        head = head->next;
+        index++;
     }
 }
-void saveElectionData(const string& leaderName, time_t time) {
-    ofstream outFile("WeeklyLeader.txt");
-    if (outFile.is_open()) {
-        outFile << time << endl;
-        outFile << leaderName << endl;
-        outFile.close();
-        cout << "Election data saved successfully." << endl;
-    } else {
-        cerr << "Unable to save election data!" << endl;
+
+void delete_task_from_list(node*& head, string task_to_delete) {
+    node* current = head;
+    node* prev = NULL;
+
+    // Case A: Deleting the Head Node
+    if (current != NULL && current->tasks == task_to_delete) {
+        head = current->next;
+        delete current;
+        cout << "Deleted: " << task_to_delete << endl;
+        return;
     }
+    // Case B: Searching and Deleting
+    while (current != NULL && current->tasks != task_to_delete) {
+        prev = current;
+        current = current->next;
+    }
+    // Task not found
+    if (current == NULL) {
+        cout << "Not found: " << task_to_delete << endl;
+        return;
+    }
+    // this will unlink the node
+    prev->next = current->next;
+    delete current;             // This line will free the memory hasham
+    cout << "Deleted: " << task_to_delete << endl;
 }
-LeaderState loadElectionData() {
-    LeaderState state;
-    state.hasData = false;
-    ifstream inFile("WeeklyLeader.txt");
-    if (inFile >> state.electionTime >> state.leaderName) {
-        state.hasData = true;
+
+// yr ye hepler function hai code ko link aur unlink krne ke liye gemini se bnwaya
+void move_node(node*& source_head, node*& dest_head, string task_name) {
+    node* current = source_head;
+    node* prev = NULL;
+
+    // iss se node find ho ga , task ka name likho ge tou jis node main task ho ga wohi node a jaye ga
+    while (current != NULL && current->tasks != task_name) {
+        prev = current;
+        current = current->next;
     }
-    inFile.close();
-    return state;
+    if (current == NULL) {
+        cout << "Error: Task '" << task_name << "' not found in the source list." << endl;
+        return;
+    }
+    // iss se node unlink ho ga
+    if (prev == NULL) {
+        source_head = current->next; // Node was the head
+    } else {
+        prev->next = current->next; // Node was middle/end
+    }
+    // is se node destination pe link hon ga
+    current->next = dest_head;
+    dest_head = current;
+
+
+    cout << "Moved task '" << task_name << "' successfully." << endl;
+}
+
+void move_task_to_progress(node*& todo_head, node*& in_progress_head, string task_name) {
+    move_node(todo_head, in_progress_head, task_name);
+}
+void move_task_to_done(node*& in_progress_head, node*& done_head, string task_name) {
+    move_node(in_progress_head, done_head, task_name);
 }
