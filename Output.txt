@@ -1,4 +1,7 @@
 Kalan 11 23
 Ahmed 33 1345
+ali 25 100
+Asfand 22 1234
+Haf 44 11
 Marqa 45 1343
 Hasham 43 1233
