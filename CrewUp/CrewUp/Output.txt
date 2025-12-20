@@ -1,0 +1,3 @@
+Hamza 10 500
+Hasham 2 50
+Asfand 0 0

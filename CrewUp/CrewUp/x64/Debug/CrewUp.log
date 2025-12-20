@@ -1,2 +1,8 @@
 ﻿  main.cpp
+C:\Users\DELL\Desktop\CrewUP\CrewUp\CrewUp\main.cpp(230,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\DELL\Desktop\CrewUP\CrewUp\CrewUp\main.cpp(306,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\DELL\Desktop\CrewUP\CrewUp\CrewUp\main.cpp(310,34): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\DELL\Desktop\CrewUP\CrewUp\CrewUp\main.cpp(316,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\DELL\Desktop\CrewUP\CrewUp\CrewUp\main.cpp(366,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\DELL\Desktop\CrewUP\CrewUp\CrewUp\main.cpp(374,32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   CrewUp.vcxproj -> C:\Users\DELL\Desktop\CrewUP\CrewUp\x64\Debug\CrewUp.exe
