@@ -92,6 +92,7 @@ int main(){
                             break;
                     }
                 }while (run);
+                saveFile();
                 run = true; // Reset run for next loop iteration
                 break;
             case 2: // INTEGRATED TASK TRACKER
@@ -219,7 +220,7 @@ void loadFile() {
     if (!outputFile) return;
     string name; int exp; float percentage;
     while (outputFile >> name>> percentage>> exp) {
-        push_back(name, percentage, exp);
+        push_front(name, percentage, exp);
     }
     outputFile.close();
 }
