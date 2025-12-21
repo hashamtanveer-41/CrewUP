@@ -74,13 +74,37 @@ void remove_member(string name) {
     delete current;
 }
 
-void add_xp(string name, int amount, float contribBonus) {
+int totalTasksXP() {
+    int total = 0;
+    TaskNode* t = todo_head;
+    while (t != NULL) { total += t->xp; t = t->next; }
+    t = in_progress_head;
+    while (t != NULL) { total += t->xp; t = t->next; }
+    t = done_head;
+    while (t != NULL) { total += t->xp; t = t->next; }
+    return total;
+}
+
+void updatePercentages() {
+    int total = totalTasksXP();
+    MemberNode* temp = memberHead;
+    if (total <= 0) {
+        while (temp != NULL) { temp->percent = 0.0f; temp = temp->next; }
+        return;
+    }
+    while (temp != NULL) {
+        temp->percent = (static_cast<float>(temp->exp) / static_cast<float>(total)) * 100.0f;
+        if (temp->percent > 100.0f) temp->percent = 100.0f;
+        temp = temp->next;
+    }
+}
+
+void add_xp(string name, int amount) {
     MemberNode* temp = memberHead;
     while (temp != NULL) {
         if (temp->name == name) {
             temp->exp += amount;
-            temp->percent += contribBonus;
-            if (temp->percent > 100) temp->percent = 100;
+            updatePercentages();
             return;
         }
         temp = temp->next;
@@ -423,6 +447,7 @@ int main() {
 
     loadMembers();
     loadTasks(); // Load saved tasks
+    updatePercentages();
 
     // Default data if empty
     if (memberHead == NULL) {
@@ -501,7 +526,7 @@ int main() {
                             }
                             add_task_to_list(todo_head, tName, tXp, "");
                         }
-                        else if (leaderMode == 1) push_member(inputString, 0, 0); // Add Mem
+                        else if (leaderMode == 1) { push_member(inputString, 0, 0); updatePercentages(); } // Add Mem
                         else if (leaderMode == 2) remove_member(inputString); // Del Mem
 
                         inputString = "";
@@ -535,8 +560,8 @@ int main() {
                                 }
                                 else if (type == 2) { // Verify Logic
                                     if (!temp->isVerified && temp->assignedTo != currentUser) {
-                                        add_xp(temp->assignedTo, temp->xp, 10.0f);
-                                        add_xp(currentUser, 50, 2.0f);
+                                        add_xp(temp->assignedTo, temp->xp);
+                                        add_xp(currentUser, 50);
                                         temp->isVerified = true;
                                     }
                                 }
