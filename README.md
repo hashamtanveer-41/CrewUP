@@ -1,4 +1,4 @@
-# CrewUp 🚀
+# CrewUp
 
 CrewUp is a gamified task manager App built using C++ and SFML.
 
