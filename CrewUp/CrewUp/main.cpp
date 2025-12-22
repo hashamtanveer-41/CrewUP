@@ -7,6 +7,7 @@
 
 using namespace std;
 
+// Structs declaration
 struct MemberNode {
     string name;
     float percent;
@@ -23,6 +24,7 @@ struct TaskNode {
     TaskNode* next;
 };
 
+// Global Variables
 MemberNode* memberHead = NULL;
 MemberNode* memberTail = NULL;
 TaskNode* todo_head = NULL;
@@ -31,6 +33,7 @@ TaskNode* done_head = NULL;
 string currentUser = "Guest";
 int leaderMode = 0;
 
+// Function prototyping
 void push_member(string, float, int);
 void remove_member(string);
 int totalTasksXP();
@@ -51,16 +54,13 @@ void drawRightPanel(sf::RenderWindow& , sf::Font& , string , bool );
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(1360, 800), "CrewUp", sf::Style::Titlebar | sf::Style::Close);
-
     sf::Font font;
     if (!font.loadFromFile("assets/fonts/Roboto-Bold.ttf")) {
         return -1;
     }
-
-    loadMembers();
+    loadMembers(); // Load members
     loadTasks(); // Load saved tasks
-    updatePercentages();
-
+    updatePercentages(); // Updating the percentages
     // Default data if empty
     if (memberHead == NULL) {
         push_member("Hamza", 0, 0);
@@ -77,7 +77,7 @@ int main() {
     sf::RectangleShape p1(sf::Vector2f(280, 780)); p1.setPosition(10, 10); p1.setFillColor(sf::Color(55, 60, 70));
     sf::RectangleShape p2(sf::Vector2f(740, 780)); p2.setPosition(300, 10); p2.setFillColor(sf::Color(55, 60, 70));
     sf::RectangleShape p3(sf::Vector2f(300, 780)); p3.setPosition(1050, 10); p3.setFillColor(sf::Color(55, 60, 70));
-
+        // Runing the GUI frames in the loop
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -146,7 +146,6 @@ int main() {
                 }
 
                 //THE LOGIC SWITCH (TASK INTERACTIONS)
-
                 auto checkListClick = [&](TaskNode* head, int type) {
                     TaskNode* temp = head;
                     int y = 60;
@@ -222,58 +221,91 @@ int main() {
     return 0;
 }
 
+// Function to add member in the list
 void push_member(string val, float p, int e) {
+    // Creating node of variable newNode
     MemberNode* newNode = new MemberNode(val, p, e);
+    // Checking for the edge cases
     if (memberHead == NULL) {
         memberHead = memberTail = newNode;
     }
     else {
+        // Adding the node after checking the edge case
         memberTail->next = newNode;
         memberTail = newNode;
     }
 }
+
+// Function to remove the member from the list
 void remove_member(string name) {
+    // Creating the Node of variabe current
     MemberNode* current = memberHead;
     MemberNode* prev = NULL;
-
+    // Checking at each node if the required node is found
     while (current != NULL && current->name != name) {
         prev = current;
         current = current->next;
     }
+    // Checking for the edge cases
     if (current == NULL) return;
-
+    // Deleting the node if found in the list
     if (prev == NULL) memberHead = current->next;
     else prev->next = current->next;
-
     if (current == memberTail) memberTail = prev;
     delete current;
 }
 
+// Function to add the total Exp of all the tasks
 int totalTasksXP() {
+    // Setting the total variable to zero
     int total = 0;
+    // Creating a sample node to traverse through the list
     TaskNode* t = todo_head;
-    while (t != NULL) { total += t->xp; t = t->next; }
+    // Checking for the edge cases
+    while (t != NULL) {
+        total += t->xp;
+        t = t->next;
+    }
     t = in_progress_head;
-    while (t != NULL) { total += t->xp; t = t->next; }
+    while (t != NULL) {
+        total += t->xp;
+        t = t->next;
+    }
     t = done_head;
-    while (t != NULL) { total += t->xp; t = t->next; }
+    while (t != NULL) {
+        total += t->xp;
+        t = t->next;
+    }
     return total;
 }
+
+// Function to Update the Percentage of each member
 void updatePercentages() {
+    // Variable to store the total exp of task
     int total = totalTasksXP();
+    // Node to traverse through the list
     MemberNode* temp = memberHead;
+    // Checking if the total is 0
     if (total <= 0) {
-        while (temp != NULL) { temp->percent = 0.0f; temp = temp->next; }
+        while (temp != NULL) {
+            temp->percent = 0.0f;
+            temp = temp->next;
+        }
         return;
     }
+    // Calculating the percentage of each member
     while (temp != NULL) {
         temp->percent = (static_cast<float>(temp->exp) / static_cast<float>(total)) * 100.0f;
         if (temp->percent > 100.0f) temp->percent = 100.0f;
         temp = temp->next;
     }
 }
+
+// Function to add the exp of each member depending on the tasks choosen by the member
 void add_xp(string name, int amount) {
+    // Node to traverse through the list
     MemberNode* temp = memberHead;
+    // Adding the exp of member
     while (temp != NULL) {
         if (temp->name == name) {
             temp->exp += amount;
@@ -283,12 +315,15 @@ void add_xp(string name, int amount) {
         temp = temp->next;
     }
 }
+
+// Function to sort the member of list based on their exp
 void sort_members() {
+    // Checking for the edge cases
     if (memberHead == NULL || memberHead->next == NULL) return;
     bool swapped;
     MemberNode* ptr1;
     MemberNode* lptr = NULL;
-
+    // Runing the loop until the members are sorted
     do {
         swapped = false;
         ptr1 = memberHead;
@@ -304,26 +339,45 @@ void sort_members() {
         lptr = ptr1;
     } while (swapped);
 }
+
+// Function to load the members
 void loadMembers() {
+    // Loading the file
     ifstream outputFile("Output.txt");
+    // Checking for the file
     if (!outputFile) return;
-    string name; int exp; float percentage;
+    // Declaring the varaibles
+    string name;
+    int exp;
+    float percentage;
+    // Reading the members from the file
     while (outputFile >> name >> percentage >> exp) {
         push_member(name, percentage, exp);
     }
+    // Closing the file
     outputFile.close();
 }
+
+// Function to save the members in the file
 void saveMembers() {
+    // Loading the file
     ofstream outputFile("Output.txt");
+    // Creating Node
     MemberNode* temp = memberHead;
+    // Runing the loop Until all the added members are added in the file
     while (temp != NULL) {
         outputFile << temp->name << " " << temp->percent << " " << temp->exp << endl;
         temp = temp->next;
     }
+    // Closing the file
     outputFile.close();
 }
+
+// Function to add the task to the List
 void add_task_to_list(TaskNode*& head, string title, int xp, string date) {
+    // Creating the node to add the task in list
     TaskNode* newNode = new TaskNode;
+    // Giving the data to the Node
     newNode->title = title;
     newNode->xp = xp;
     newNode->date = date;
@@ -333,52 +387,75 @@ void add_task_to_list(TaskNode*& head, string title, int xp, string date) {
     head = newNode;
 }
 
+// Function to move the node
 void move_node_logic(TaskNode*& source_head, TaskNode*& dest_head, string task_name, string assigneeName) {
+    // Node to traverse through the list
     TaskNode* current = source_head;
     TaskNode* prev = NULL;
 
+    // Checking for the edge cases
     while (current != NULL && current->title != task_name) {
         prev = current;
         current = current->next;
     }
+    // Checking if the current is null then return
     if (current == NULL) return;
 
+    // Moving the source head node to currents next if previous is null
     if (prev == NULL) source_head = current->next;
     else prev->next = current->next;
-
     if (assigneeName != "") current->assignedTo = assigneeName;
 
+    // Traversing through the list
     current->next = dest_head;
     dest_head = current;
 }
 
+// Function to delete the task globally
 void delete_task_globally(string title) {
+    // (TaskNode*& head) is passed by reference so we can modify the actual head pointer of the list.
     auto deleteFromList = [&](TaskNode*& head) -> bool {
         TaskNode* current = head;
         TaskNode* prev = NULL;
+
+        // Traverse the linked list
         while (current != NULL) {
+            // Check if the current node matches the title we want to delete
             if (current->title == title) {
+
+                // Case 1: The node to delete is the head of the list
                 if (prev == NULL) head = current->next;
+                // Case 2: The node is in the middle or end
                 else prev->next = current->next;
-                delete current;
-                return true;
+
+                delete current; // Free the memory
+                return true;    // Return true to indicate successful deletion
             }
+            // Move pointers forward
             prev = current;
             current = current->next;
         }
-        return false;
+        return false; // Return false if the title was not found in this list
     };
-
+    // If NOT found (!deleteFromList), move to the next list.
     if (!deleteFromList(todo_head)) {
+
+        // If not in To-Do, check 'In-Progress'
         if (!deleteFromList(in_progress_head)) {
+
+            // If not in In-Progress, finally check 'Done'
             deleteFromList(done_head);
         }
     }
 }
 
+// Function to save the tasks
 void saveTasks() {
+    // Opening the file tasks to write the data in it
     ofstream file("Tasks.txt");
+    // Saving all the tasks added in the list
     auto saveList = [&](TaskNode* head, int type) {
+        // Node to traverse through the list
         TaskNode* temp = head;
         while (temp != NULL) {
             file << type << endl << temp->xp << endl << temp->isVerified << endl;
@@ -387,44 +464,68 @@ void saveTasks() {
         }
     };
     saveList(todo_head, 0); saveList(in_progress_head, 1); saveList(done_head, 2);
+    // Closing the file
     file.close();
 }
 
+
 void loadTasks() {
-    ifstream file("Tasks.txt");
-    if (!file) return;
+    ifstream file("Tasks.txt"); // Open the text file for reading
+    if (!file) return; // If the file doesn't exist, stop here
+
     int type, xp; bool isVerified;
     string title, assigned, date;
+
+    // Keep reading as long as there is data in the file
     while (file >> type >> xp >> isVerified) {
-        file.ignore();
-        getline(file, title); getline(file, assigned); getline(file, date);
+        file.ignore(); // Skip the leftover newline after reading the numbers
 
+        // Read the text lines (Title, Assigned person, Date)
+        getline(file, title);
+        getline(file, assigned);
+        getline(file, date);
+
+        // Create a new task and fill it with the data we just read
         TaskNode* newNode = new TaskNode;
-        newNode->title = title; newNode->xp = xp; newNode->assignedTo = assigned;
-        newNode->date = date; newNode->isVerified = isVerified;
+        newNode->title = title;
+        newNode->xp = xp;
+        newNode->assignedTo = assigned;
+        newNode->date = date;
+        newNode->isVerified = isVerified;
 
-        if (type == 0) { newNode->next = todo_head; todo_head = newNode; }
-        else if (type == 1) { newNode->next = in_progress_head; in_progress_head = newNode; }
-        else { newNode->next = done_head; done_head = newNode; }
+        // check the 'type' to decide which list to put the task in
+        if (type == 0) {
+            newNode->next = todo_head; // Add to To-Do list
+            todo_head = newNode;
+        }
+        else if (type == 1) {
+            newNode->next = in_progress_head; // Add to In-Progress list
+            in_progress_head = newNode;
+        }
+        else {
+            newNode->next = done_head; // Add to Done list
+            done_head = newNode;
+        }
     }
-    file.close();
+    file.close(); // Close the file when finished
 }
 
 string getShameMember() {
-    MemberNode* temp = memberHead;
+    MemberNode* temp = memberHead; // start at the beginning of the list
     string shameName = "";
-    int lowestScore = 101;
-    while (temp != NULL) {
+    int lowestScore = 101; // set initial score higher than max possible 100
+
+    while (temp != NULL) { // loop through every member in the list
         if (temp->percent < lowestScore) {
             lowestScore = temp->percent;
-            shameName = temp->name;
+            shameName = temp->name; // save the name of this member
         }
-        temp = temp->next;
+        temp = temp->next; // move to the next member
     }
+    // only return the name if the score is really low (below 30)
     if (lowestScore < 30) return shameName;
-    return "";
+    return ""; // return empty if no one failed that badly
 }
-
 void drawTaskCard(sf::RenderWindow& window, sf::Font& font, TaskNode* task, float x, float y, int listType) {
     sf::Color statusColor;
 
