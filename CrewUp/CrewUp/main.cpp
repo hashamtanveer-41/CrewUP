@@ -12,7 +12,6 @@ struct MemberNode {
     float percent;
     int exp;
     MemberNode* next;
-
     MemberNode(string val, float p, int e) : name(val), percent(p), exp(e), next(NULL) {}
 };
 struct TaskNode {
@@ -34,7 +33,7 @@ int leaderMode = 0;
 
 void push_member(string, float, int);
 void remove_member(string);
-int totalTaksXP();
+int totalTasksXP();
 void updatePercentages();
 void add_xp(string,int );
 void sort_members();
