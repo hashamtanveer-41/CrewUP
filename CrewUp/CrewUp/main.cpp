@@ -23,6 +23,11 @@ struct TaskNode {
     bool isVerified;
     TaskNode* next;
 };
+struct LeaderState {
+    string leaderName = "None";
+    time_t electionTime  = 0;
+    bool hasData = false;
+};
 
 // Global Variables
 MemberNode* memberHead = NULL;
@@ -281,21 +286,27 @@ int totalTasksXP() {
 
 // Function to Update the Percentage of each member
 void updatePercentages() {
-    // Variable to store the total exp of task
-    int total = totalTasksXP();
-    // Node to traverse through the list
+    // Calculate total earned XP across all members (team total)
+    int totalMembersXP = 0;
     MemberNode* temp = memberHead;
-    // Checking if the total is 0
-    if (total <= 0) {
+    while (temp != NULL) {
+        totalMembersXP += temp->exp;
+        temp = temp->next;
+    }
+
+    // If no member has earned XP, set everyone's percentage to 0
+    temp = memberHead;
+    if (totalMembersXP <= 0) {
         while (temp != NULL) {
             temp->percent = 0.0f;
             temp = temp->next;
         }
         return;
     }
-    // Calculating the percentage of each member
+
+    // Otherwise compute each member's contribution from the members' total
     while (temp != NULL) {
-        temp->percent = (static_cast<float>(temp->exp) / static_cast<float>(total)) * 100.0f;
+        temp->percent = (static_cast<float>(temp->exp) / static_cast<float>(totalMembersXP)) * 100.0f;
         if (temp->percent > 100.0f) temp->percent = 100.0f;
         temp = temp->next;
     }
